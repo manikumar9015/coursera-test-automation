@@ -12,7 +12,7 @@ import pageObjects.HomePage;
 
 import java.util.Map;
 
-public class ForYouSteps {
+public class ForCampusSteps {
     WebDriver driver;
     HomePage home;
     ForCampusPage forCampus;
