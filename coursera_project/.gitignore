@@ -10,15 +10,6 @@ logs/
 reports/
 *.html
 
-# IDE
-.idea/
-*.iml
-.classpath
-.project
-.settings/
-
-# Maven
-.m2/
 
 # OS
 .DS_Store
