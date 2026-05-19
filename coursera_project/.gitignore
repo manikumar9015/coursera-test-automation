@@ -1,0 +1,25 @@
+# Build and generated files
+target/
+test-output/
+
+# Logs
+logs/
+*.log
+
+# Reports
+reports/
+*.html
+
+# IDE
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# Maven
+.m2/
+
+# OS
+.DS_Store
+Thumbs.db
