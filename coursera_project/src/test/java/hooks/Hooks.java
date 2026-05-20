@@ -13,44 +13,33 @@ import io.cucumber.java.AfterStep;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 
-
 public class Hooks {
 
-    WebDriver driver;
-    Properties p;
-
     @Before
-    public void setup() throws IOException
-    {
-        driver=BaseClass.initilizeBrowser();
-
-        p=BaseClass.getProperties();
+    public void setup() throws IOException {
+        WebDriver driver = BaseClass.initilizeBrowser(); // Thread-local driver created
+        Properties p = BaseClass.getProperties();
         driver.get(p.getProperty("appURL"));
-        driver.manage().window().maximize();
-
     }
-
 
     @After
     public void tearDown() {
-
-        driver.quit();
-
+        WebDriver driver = BaseClass.getDriver();
+        if (driver != null) {
+            try {
+                driver.manage().deleteAllCookies();
+            } catch (Exception ignored) {}
+            BaseClass.quitDriver(); // Quit and remove ThreadLocal
+        }
     }
-
 
     @AfterStep
     public void addScreenshot(Scenario scenario) {
-
-        // this is for cucumber junit report
-//        if(scenario.isFailed()) {
-
-            TakesScreenshot ts=(TakesScreenshot) driver;
-            byte[] screenshot=ts.getScreenshotAs(OutputType.BYTES);
-            scenario.attach(screenshot, "image/png",scenario.getName());
-
-//        }
-
+        WebDriver driver = BaseClass.getDriver();
+        if (driver != null && scenario.isFailed()) {
+            TakesScreenshot ts = (TakesScreenshot) driver;
+            byte[] screenshot = ts.getScreenshotAs(OutputType.BYTES);
+            scenario.attach(screenshot, "image/png", scenario.getName());
+        }
     }
-
 }

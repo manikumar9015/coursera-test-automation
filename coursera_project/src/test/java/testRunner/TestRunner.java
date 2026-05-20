@@ -1,17 +1,26 @@
 package testRunner;
 
-import io.cucumber.junit.Cucumber;
-import io.cucumber.junit.CucumberOptions;
-import org.junit.runner.RunWith;
+import io.cucumber.testng.AbstractTestNGCucumberTests;
+import io.cucumber.testng.CucumberOptions;
+import org.testng.annotations.DataProvider;
 
-@RunWith(Cucumber.class)
-@CucumberOptions(features = "Features",
+@CucumberOptions(
+        features = "Features",
         glue = {"stepDefinitions", "hooks"},
-        plugin= {
-                "pretty", "html:reports/myreport.html",
+        plugin = {
+                "pretty",
+                "html:reports/myreport.html",
                 "com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:",
-                "rerun:target/rerun.txt",
+                "rerun:target/rerun.txt"
+        },
+        monochrome = true
+)
+public class TestRunner extends AbstractTestNGCucumberTests {
 
-        })
-public class TestRunner {
+    // This method enables parallel execution of scenarios
+    @Override
+    @DataProvider(parallel = true)
+    public Object[][] scenarios() {
+        return super.scenarios();
+    }
 }
