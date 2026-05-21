@@ -6,18 +6,13 @@ Feature: For Campus Form Validation
 #  Background:
 #    Given User is on the Coursera homepage
 
-  Scenario: Verify error message for invalid email format
+  Scenario Outline: Verify error message for invalid email format
     Given the user is in the home page
     When User navigates to For Campus section
-    And User fills the Ready to transform form with the following details:
-      | FirstName | Mr                   |
-      | LastName  | Nags                 |
-      | Email     | nagsemail            |
-      | Phone     | 9023909823           |
-      | Role      | CEO                  |
-      | Dept      | International        |
-      | Needs     | Courses for myself   |
-      | Country   | India                |
-      | State     | Karnataka            |
+    And User fills the Ready to transform form with the details for rowindex "<rowindex>"
     And User clicks the submit button
     Then User should see the email error message and display it
+
+    Examples:
+      | rowindex |
+      | 1        |

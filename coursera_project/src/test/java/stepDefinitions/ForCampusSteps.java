@@ -7,9 +7,14 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.jsoup.Connection;
 import org.openqa.selenium.WebDriver;
+import org.testng.Assert;
 import pageObjects.ForCampusPage;
 import pageObjects.HomePage;
+import utilities.DataReader;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ForCampusSteps {
@@ -31,24 +36,35 @@ public class ForCampusSteps {
         forCampus = new ForCampusPage(driver);
     }
 
-    @When("User fills the Ready to transform form with the following details:")
-    public void user_fills_the_ready_to_transform_form_with_the_following_details(DataTable dataTable) {
-        BaseClass.getLogger().info("Parsing form data from DataTable and filling details..");
-        // Convert the DataTable to a Map for easy access
-        Map<String, String> formData = dataTable.asMap(String.class, String.class);
+    @When("User fills the Ready to transform form with the details for rowindex {string}")
+    public void user_fills_the_ready_to_transform_form_with_the_details_for_rowindex(String rowIndex) {
+        BaseClass.getLogger().info("Parsing form data from Excel and filling details..");
+        List<HashMap<String, String>> datamap = null;
 
-        // Accessing values using the keys from your feature file
-        String firstName = formData.get("FirstName");
-        String lastName  = formData.get("LastName");
-        String email     = formData.get("Email");
-        String phone     = formData.get("Phone");
-        String role      = formData.get("Role");
-        String dept      = formData.get("Dept");
-        String needs     = formData.get("Needs");
-        String country   = formData.get("Country");
-        String state     = formData.get("State");
+        try {
+            // Note: Update the Excel file name and sheet name to match your actual file
+            datamap = DataReader.data(System.getProperty("user.dir") + "\\testData\\formData.xlsx", "Sheet1");
+        } catch (IOException e) {
+            e.printStackTrace();
+            Assert.fail("Failed to read data from excel file");
+        }
 
-        forCampus.enterContactDetails(firstName, lastName, email,phone);
+        // Convert string row index to integer (subtract 1 because list index starts at 0)
+        int index = Integer.parseInt(rowIndex) - 1;
+
+        // Accessing values using the column headers from your Excel sheet
+        String firstName = datamap.get(index).get("FirstName");
+        String lastName  = datamap.get(index).get("LastName");
+        String email     = datamap.get(index).get("Email");
+        String phone     = datamap.get(index).get("Phone");
+        String role      = datamap.get(index).get("Role");
+        String dept      = datamap.get(index).get("Dept");
+        String needs     = datamap.get(index).get("Needs");
+        String country   = datamap.get(index).get("Country");
+        String state     = datamap.get(index).get("State");
+
+        // Passing the fetched data to your Page Object methods
+        forCampus.enterContactDetails(firstName, lastName, email, phone);
         forCampus.selectRole(role);
         forCampus.selectDepartment(dept);
         forCampus.selectNeeds(needs);
