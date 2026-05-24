@@ -16,19 +16,16 @@ public class LanguageLearningPage extends BasePage {
     // Dynamic helper to handle Coursera's unstable sidebar
     private void safeClickFilter(String levelName) throws InterruptedException {
         By locator = By.xpath("//span[text()='" + levelName + "']/preceding-sibling::input | //span[contains(text(),'" + levelName + "')]");
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        // Wait up to 8 seconds for the element to be clickable (presence + visible + enabled)
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(8));
         JavascriptExecutor js = (JavascriptExecutor) driver;
-
-        for (int i = 0; i < 3; i++) { // Retry up to 3 times
-            try {
-                WebElement element = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
-                js.executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
-                Thread.sleep(1000);
-                js.executeScript("arguments[0].click();", element);
-                return; // Exit if success
-            } catch (StaleElementReferenceException e) {
-                Thread.sleep(1000); // Wait for DOM to stabilize and retry
-            }
+        WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
+        js.executeScript("arguments[0].scrollIntoView({block:'center'});", element);
+        try {
+            element.click();
+        } catch (WebDriverException e) {
+            // Fallback: JS click if regular click fails (covers intercept/stale/click intercept)
+            js.executeScript("arguments[0].click();", element);
         }
     }
 
