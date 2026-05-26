@@ -36,10 +36,10 @@ public class Hooks {
     @AfterStep
     public void addScreenshot(Scenario scenario) {
         WebDriver driver = BaseClass.getDriver();
-        if (driver != null && scenario.isFailed()) {
+//        if (driver != null && scenario.isFailed()) {
             TakesScreenshot ts = (TakesScreenshot) driver;
             byte[] screenshot = ts.getScreenshotAs(OutputType.BYTES);
             scenario.attach(screenshot, "image/png", scenario.getName());
-        }
+//        }
     }
 }
