@@ -43,10 +43,24 @@ public class SearchResultsPage extends BasePage {
 
     public void extractFirstTwoCourses() {
         wait.until(ExpectedConditions.visibilityOfAllElements(courseCards));
+
         for (int i = 0; i < 2 && i < courseCards.size(); i++) {
             WebElement card = courseCards.get(i);
+
+            // Extract Title
             String title = card.findElement(By.cssSelector("h3.cds-CommonCard-title")).getText();
-            String rating = card.findElement(By.cssSelector(".cds-RatingStat-meter span.css-4s48ix")).getText();
+
+            // Extract Rating safely
+            String rating;
+            try {
+                // Using a stable parent-child CSS selector instead of the dynamic class
+                rating = card.findElement(By.cssSelector(".cds-RatingStat-meter > span")).getText();
+            } catch (org.openqa.selenium.NoSuchElementException e) {
+                // Fallback if the course does not have a rating yet
+                rating = "No rating available";
+            }
+
+            // Extract Duration
             String fullMetadata = card.findElement(By.cssSelector(".cds-CommonCard-metadata p")).getText();
             String[] parts = fullMetadata.split("·");
             String duration = parts[parts.length - 1].trim();
